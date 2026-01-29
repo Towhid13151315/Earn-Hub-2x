@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>All in One | 1000+ Tasks</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10531705' data-sdk='show_10531705'></script>
+    
+    <style>
+        :root { --primary: #0088cc; --accent: #ffd700; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #2ecc71; --danger: #ff4757; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; overflow-x: hidden; }
+
+        .header { background: linear-gradient(135deg, var(--primary), #005580); padding: 30px 20px 50px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
+        .balance-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); padding: 12px; border-radius: 20px; display: inline-block; min-width: 180px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .container { padding: 0 15px; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Task List Styling */
+        .task-scroll-area { height: calc(100vh - 280px); overflow-y: auto; padding-right: 5px; margin-top: 15px; }
+        .card-box { background: var(--card); border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Spin Wheel */
+        .wheel-outer { position: relative; width: 220px; height: 220px; margin: 20px auto; border: 8px solid #2c3e50; border-radius: 50%; background: #2c3e50; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); }
+        .slice { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; clip-path: polygon(50% 50%, 15% 0, 85% 0); transform-origin: 50% 50%; font-size: 14px; font-weight: bold; }
+        .s1 { transform: rotate(0deg); background: #e74c3c; } .s2 { transform: rotate(90deg); background: #2ecc71; }
+        .s3 { transform: rotate(180deg); background: #f1c40f; } .s4 { transform: rotate(270deg); background: #9b59b6; }
+
+        .btn-main { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-main:disabled { background: #475569; cursor: not-allowed; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111827; display: flex; justify-content: space-around; padding: 12px 0 25px; border-top: 1px solid #333; }
+        .nav-item { color: #64748b; text-align: center; flex: 1; font-size: 11px; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { display: block; font-size: 22px; margin-bottom: 4px; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="balance-card">
+            <h1 id="uBalance" style="margin:0;">0.00</h1>
+            <p style="margin:0; font-size: 11px; opacity:0.8;">TK Balance</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="tab-video" class="section active">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                <h3>🎬 Video Tasks</h3>
+                <span style="font-size:12px; color:var(--accent);">Total: 1000</span>
+            </div>
+            <div class="task-scroll-area" id="taskList">
+                </div>
+        </div>
+
+        <div id="tab-task" class="section">
+            <h3 style="margin-top:20px;">🎡 Fortune Spin</h3>
+            <div class="card-box" style="display:block; text-align:center;">
+                <div class="wheel-outer">
+                    <div id="wheel">
+                        <div class="slice s1">💣</div><div class="slice s2">5৳</div>
+                        <div class="slice s3">10৳</div><div class="slice s4">20৳</div>
+                    </div>
+                </div>
+                <p>Spins Left: <span id="pSpins" style="color:var(--accent);">0</span></p>
+                <button class="btn-main" id="spinBtn" onclick="handleSpin()">SPIN NOW</button>
+            </div>
+        </div>
+
+        <div id="tab-profile" class="section">
+            <div class="card-box" style="display:block; text-align:center; margin-top:20px;">
+                <h2 id="pName">Loading...</h2>
+                <div onclick="copyCode()" style="background:rgba(0,136,204,0.1); border:2px dashed var(--primary); padding:15px; border-radius:15px; margin:15px 0; cursor:pointer;">
+                    <p style="margin:0; font-size:10px;">TAP TO COPY REFER CODE</p>
+                    <h2 id="uRefCode" style="margin:5px 0; color:var(--accent); letter-spacing:3px;">---</h2>
+                </div>
+                <p>Refers: <span id="refCount">0</span>/15</p>
+            </div>
+        </div>
+
+        <div id="tab-wallet" class="section">
+            <h3 style="margin-top:20px;">💰 Withdraw</h3>
+            <div class="card-box" style="display:block;">
+                <input type="number" id="wNum" placeholder="bKash/Nagad Number" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:none; background:#0f172a; color:white;">
+                <input type="number" id="wAmt" placeholder="Amount (Min 1000)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:none; background:#0f172a; color:white;">
+                <button class="btn-main" style="width:100%;" onclick="withdraw()">Withdraw Now</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showTab('tab-video', this)"><i class="fas fa-play"></i>Video</div>
+        <div class="nav-item" onclick="showTab('tab-task', this)"><i class="fas fa-dharmachakra"></i>Spin</div>
+        <div class="nav-item" onclick="showTab('tab-profile', this)"><i class="fas fa-user"></i>Profile</div>
+        <div class="nav-item" onclick="showTab('tab-wallet', this)"><i class="fas fa-wallet"></i>Wallet</div>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, getDoc, updateDoc, setDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaxt0kpDNSp_023Ny2cNr9cdJ5uQ9Wvn0",
+            authDomain: "telegram-adult--content.firebaseapp.com",
+            projectId: "telegram-adult--content",
+            storageBucket: "telegram-adult--content.firebasestorage.app",
+            messagingSenderId: "913457221066",
+            appId: "1:913457221066:web:0d5a2423123631ee249333"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const currentUserId = localStorage.getItem('primeCashUID') || "USER" + Math.floor(1000 + Math.random()*9000);
+        localStorage.setItem('primeCashUID', currentUserId);
+
+        let currentDeg = 0;
+
+        // --- Generate 1000 Tasks ---
+        const taskList = document.getElementById('taskList');
+        for(let i=1; i<=1000; i++){
+            const task = document.createElement('div');
+            task.className = 'card-box';
+            task.innerHTML = `
+                <div style="text-align:left;">
+                    <b style="font-size:14px;">Video Task #${i}</b><br>
+                    <small style="color:var(--success);">Reward: 2.50 TK</small>
+                </div>
+                <button class="btn-main" onclick="watchVideo(this, 2.5)">Watch</button>
+            `;
+            taskList.appendChild(task);
+        }
+
+        // --- Real-time Data ---
+        onSnapshot(doc(db, "users", currentUserId), (d) => {
+            if(!d.exists()) return setDoc(doc(db, "users", currentUserId), { name: "AIO User", balance: 0, referCount: 0, spinsLeft: 5, referCode: "AIO"+Math.floor(100+Math.random()*899) });
+            const data = d.data();
+            document.getElementById('uBalance').innerText = data.balance.toFixed(2);
+            document.getElementById('pName').innerText = data.name;
+            document.getElementById('uRefCode').innerText = data.referCode;
+            document.getElementById('refCount').innerText = data.referCount || 0;
+            document.getElementById('pSpins').innerText = data.spinsLeft || 0;
+        });
+
+        // --- Video Action ---
+        window.watchVideo = async (btn, reward) => {
+            btn.disabled = true;
+            btn.innerText = "Loading...";
+            
+            if (typeof show_10531705 === 'function') {
+                show_10531705().then(async () => {
+                    const uRef = doc(db, "users", currentUserId);
+                    const snap = await getDoc(uRef);
+                    await updateDoc(uRef, { balance: snap.data().balance + reward });
+                    alert("Success! 2.50 TK Added.");
+                    btn.innerText = "Completed";
+                }).catch(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Watch";
+                });
+            }
+        };
+
+        // --- Spin Action ---
+        window.handleSpin = async () => {
+            const uRef = doc(db, "users", currentUserId);
+            const snap = await getDoc(uRef);
+            if(snap.data().spinsLeft <= 0) return alert("No spins left!");
+
+            const btn = document.getElementById('spinBtn');
+            btn.disabled = true;
+
+            show_10531705().then(() => {
+                let rand = Math.random() * 100;
+                let p = (rand < 40) ? {v:0, d:0} : (rand < 80) ? {v:5, d:270} : (rand < 95) ? {v:10, d:180} : {v:20, d:90};
+                currentDeg += (3600 + p.d - (currentDeg % 360));
+                document.getElementById('wheel').style.transform = `rotate(${currentDeg}deg)`;
+                
+                setTimeout(async () => {
+                    await updateDoc(uRef, { balance: snap.data().balance + p.v, spinsLeft: snap.data().spinsLeft - 1 });
+                    alert(p.v === 0 ? "Boom! 💣" : "You won " + p.v + " TK");
+                    btn.disabled = false;
+                }, 5000);
+            });
+        };
+
+        window.showTab = (id, el) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        };
+
+        window.copyCode = () => {
+            navigator.clipboard.writeText(document.getElementById('uRefCode').innerText);
+            alert("Code Copied!");
+        };
+    </script>
+</body>
+</html>
