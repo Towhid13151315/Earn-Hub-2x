@@ -17,6 +17,7 @@
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --success: #10b981;
+            --danger: #ef4444;
         }
 
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -84,7 +85,15 @@
         .monetag-btn-main:active { transform: scale(0.95); background: rgba(91, 127, 255, 0.1); }
         
         .list-item { background: var(--card-bg); margin: 8px 15px; padding: 15px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.03); }
-        .card { background: var(--card-bg); margin: 15px; padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- Video Styles --- */
+        .video-card { background: var(--card-bg); margin: 15px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .watch-btn { background: var(--accent-blue); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .btn-locked { background: #334155 !important; opacity: 0.6; cursor: not-allowed !important; }
+        .btn-success { background: var(--success) !important; }
 
         /* --- Wallet & Inputs --- */
         .wallet-card { background: linear-gradient(135deg, #065f46, #064e3b); margin: 15px; padding: 30px; border-radius: 25px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
@@ -102,10 +111,227 @@
         .nav-item.active { color: var(--accent-blue); }
         .nav-item i { font-size: 22px; margin-bottom: 6px; display: block; transition: 0.3s; }
         .home-circle { background: var(--accent-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; margin-top: -40px; border: 5px solid var(--bg-dark); box-shadow: 0 5px 15px rgba(91, 127, 255, 0.3); }
-
-        .watch-btn { background: var(--accent-blue); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; }
-        .video-card { background: var(--card-bg); margin: 15px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <h1 class="main-title">EARNING HUB <img src="https://i.ibb.co.com/C3zyNMkW/check-mark-15659968.png" alt="verified" class="verified-badge"></h1>
+    </header>
+
+    <div class="top-bar">
+        <div class="user-info">
+            <img src="" class="avatar" id="uImgTop">
+            <div>
+                <div id="uNameTop" style="font-weight: 800; font-size: 15px;">Loading...</div>
+                <div style="font-size: 11px; color: var(--accent-blue); font-weight: 600;">Verified Account <i class="fas fa-check-circle"></i></div>
+            </div>
+        </div>
+        <div class="balance-card"><span>৳ <span id="uBalance">0.00</span></span></div>
+    </div>
+
+    <div id="tab-tasks" class="container active">
+        <div class="task-tabs">
+            <div class="tab-item active" onclick="switchTask('monetag-area', this)">Ads</div>
+            <div class="tab-item" onclick="switchTask('video-area', this)">Video</div>
+            <div class="tab-item" onclick="switchTask('tele-area', this)">Telegram</div>
+        </div>
+
+        <div id="monetag-area">
+            <div id="monetag-main-grid" class="monetag-grid">
+                <div class="monetag-btn-main" onclick="loadMonetagSub(1)">Server 1</div>
+                <div class="monetag-btn-main" onclick="loadMonetagSub(2)">Server 2</div>
+                <div class="monetag-btn-main" onclick="loadMonetagSub(3)">Server 3</div>
+                <div class="monetag-btn-main" onclick="loadMonetagSub(4)">Server 4</div>
+                <div class="monetag-btn-main" onclick="loadMonetagSub(5)">Server 5</div>
+            </div>
+            <div id="monetag-list-view" style="display:none; padding:15px;">
+                <div onclick="backToMonetag()" style="color:var(--accent-blue); cursor:pointer; margin-bottom:15px; font-weight:bold;"><i class="fas fa-arrow-left"></i> Back to Servers</div>
+                <div id="taskList"></div>
+            </div>
+        </div>
+
+        <div id="video-area" style="display:none;"><div id="vList"></div></div>
+
+        <div id="tele-area" style="display:none; padding:30px; text-align:center;">
+            <div class="video-card" style="padding:40px 20px;">
+                <i class="fab fa-telegram" style="font-size: 60px; color: #0088cc; margin-bottom: 20px;"></i>
+                <h3 style="margin:0;">Official Community</h3>
+                <button class="watch-btn" style="width:100%; padding:15px; margin-top:20px;" onclick="window.open('https://t.me/EarningHub2x')">Join Channel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-top" class="container"><h3 style="text-align: center; margin-top: 25px;">🏆 LEADERBOARD</h3><div id="leaderList"></div></div>
+
+    <div id="tab-wallet" class="container">
+        <h3 style="text-align: center; margin-top: 25px;">Withdrawal Portal</h3>
+        <div class="wallet-card">
+            <small>AVAILABLE BALANCE</small><br>
+            <span style="font-size:36px; font-weight: 900;">৳ <span id="wBal">0.00</span></span>
+        </div>
+        <div class="method-grid">
+            <div class="method-box selected" onclick="selectMethod('bkash', this)"><img src="https://i.ibb.co.com/6JmxVqKG/27956.png"><div>bKash</div></div>
+            <div class="method-box" onclick="selectMethod('nagad', this)"><img src="https://i.ibb.co.com/b506cLJF/1679248787-Nagad-Logo.png"><div>Nagad</div></div>
+        </div>
+        <input type="number" id="payNumber" placeholder="Account Number">
+        <input type="number" id="payAmount" placeholder="Amount (Min 1000 TK)">
+        <button class="submit-btn" id="withdrawBtn" onclick="requestWithdrawal()">SUBMIT WITHDRAW REQUEST</button>
+    </div>
+
+    <div id="tab-profile" class="container" style="text-align: center; padding-top: 30px;">
+        <img src="" id="uImgBig" style="width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover;">
+        <h2 id="uNameBig" style="margin: 15px 0 5px; font-weight: 800;">User Name</h2>
+        <div id="refer-section" style="background: rgba(91, 127, 255, 0.05); margin: 20px; padding: 20px; border-radius: 20px; border: 1px dashed var(--accent-blue);">
+            <small>Have a Refer Code? (Get ৳5)</small>
+            <div style="display: flex; gap: 10px; margin-top: 12px;"><input type="text" id="inputReferCode" placeholder="Enter Code" style="margin:0; flex:1;"><button class="watch-btn" onclick="applyRefer()" id="referBtn">Apply</button></div>
+        </div>
+        <div style="background: var(--card-bg); margin: 20px; padding: 25px; border-radius: 25px; display: flex; justify-content: space-around;">
+            <div><small>Balance</small><br><b id="pBal" style="font-size:22px; color:var(--accent-orange);">0.00 ৳</b></div>
+            <div><small>Refer Code</small><br><b id="uRef" style="font-size:18px;">---</b></div>
+        </div>
+        <button class="submit-btn" style="width:85%; margin-top: 10px;" onclick="shareRefer()"><i class="fas fa-share-alt"></i> INVITE FRIENDS</button>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showMainTab('tab-tasks', this)"><i class="fas fa-th-large"></i>Tasks</div>
+        <div class="nav-item" onclick="showMainTab('tab-top', this); loadTop();"><i class="fas fa-crown"></i>Top</div>
+        <div class="nav-item"><div class="home-circle" onclick="showMainTab('tab-tasks', this)"><i class="fas fa-home"></i></div></div>
+        <div class="nav-item" onclick="showMainTab('tab-wallet', this)"><i class="fas fa-wallet"></i>Wallet</div>
+        <div class="nav-item" onclick="showMainTab('tab-profile', this)"><i class="fas fa-user-circle"></i>Profile</div>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp, where, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaxt0kpDNSp_023Ny2cNr9cdJ5uQ9Wvn0",
+            projectId: "telegram-adult--content",
+            storageBucket: "telegram-adult--content.appspot.com",
+            messagingSenderId: "367156943896",
+            appId: "1:367156943896:web:12185203366a5067204684"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const tg = window.Telegram.WebApp;
+        const userData = tg.initDataUnsafe?.user;
+        const currentUserId = userData ? String(userData.id) : (localStorage.getItem('eh_pro_uid') || "U" + Math.floor(Math.random()*10000));
+        localStorage.setItem('eh_pro_uid', currentUserId);
+
+        async function initUser() {
+            const userRef = doc(db, "users", currentUserId);
+            const snap = await getDoc(userRef);
+            if(!snap.exists()){
+                await setDoc(userRef, { telegramID: userData?.first_name || "Guest", photo: userData?.photo_url || "", balance: 0, referCode: "REF" + Math.floor(1000 + Math.random() * 9000), uid: currentUserId, createdAt: serverTimestamp() });
+            }
+        }
+        initUser();
+
+        let userBalance = 0;
+
+        // --- VIDEO SYNC WITH TIMER LOCK ---
+        onSnapshot(collection(db, "videos"), (snap) => {
+            const vList = document.getElementById('vList');
+            vList.innerHTML = "";
+            snap.forEach(d => {
+                const v = d.data();
+                const vid = d.id;
+                vList.innerHTML += `
+                    <div class="video-card">
+                        <div class="video-container"><iframe src="${v.url}"></iframe></div>
+                        <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><b>${v.title}</b><br><small id="tmr-${vid}" style="color:var(--accent-orange)">Wait 60s</small></div>
+                            <button id="btn-${vid}" class="watch-btn btn-locked" onclick="alert('পুরো ভিডিও দেখুন!')">Locked</button>
+                        </div>
+                    </div>`;
+
+                let timeLeft = 60;
+                let timer = setInterval(() => {
+                    timeLeft--;
+                    const tmrEl = document.getElementById(`tmr-${vid}`);
+                    if(tmrEl) tmrEl.innerText = `Wait ${timeLeft}s`;
+                    if(timeLeft <= 0) {
+                        clearInterval(timer);
+                        const btn = document.getElementById(`btn-${vid}`);
+                        if(btn) {
+                            btn.innerText = "Claim Now";
+                            btn.classList.remove('btn-locked');
+                            btn.classList.add('btn-success');
+                            btn.onclick = () => { addMoney(v.reward); btn.innerText = "Collected"; btn.disabled = true; btn.onclick = null; };
+                        }
+                    }
+                }, 1000);
+            });
+        });
+
+        window.addMoney = async (amt) => {
+            await updateDoc(doc(db, "users", currentUserId), { balance: increment(amt) });
+            alert("৳" + amt + " Reward Added!");
+        };
+
+        window.showMainTab = (id, el) => {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        };
+
+        window.switchTask = (id, el) => {
+            document.getElementById('monetag-area').style.display = 'none';
+            document.getElementById('video-area').style.display = 'none';
+            document.getElementById('tele-area').style.display = 'none';
+            document.getElementById(id).style.display = 'block';
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        };
+
+        onSnapshot(doc(db, "users", currentUserId), (d) => {
+            if(!d.exists()) return;
+            const data = d.data();
+            userBalance = data.balance || 0;
+            document.getElementById('uBalance').innerText = userBalance.toFixed(2);
+            document.getElementById('wBal').innerText = userBalance.toFixed(2);
+            document.getElementById('pBal').innerText = userBalance.toFixed(2) + " ৳";
+            document.getElementById('uNameTop').innerText = data.telegramID;
+            document.getElementById('uNameBig').innerText = data.telegramID;
+            document.getElementById('uRef').innerText = data.referCode;
+            document.getElementById('uImgTop').src = data.photo || "https://ui-avatars.com/api/?name=User";
+            document.getElementById('uImgBig').src = data.photo || "https://ui-avatars.com/api/?name=User";
+        });
+
+        window.loadMonetagSub = (id) => {
+            document.getElementById('monetag-main-grid').style.display = 'none';
+            document.getElementById('monetag-list-view').style.display = 'block';
+            const tList = document.getElementById('taskList');
+            tList.innerHTML = "";
+            for(let i=1; i<=15; i++){ tList.innerHTML += `<div class="list-item"><span>Server ${id} Task ${i}</span><button class="watch-btn" onclick="fireAd()">Watch</button></div>`; }
+        };
+
+        window.backToMonetag = () => {
+            document.getElementById('monetag-main-grid').style.display = 'grid';
+            document.getElementById('monetag-list-view').style.display = 'none';
+        };
+
+        window.fireAd = () => { if (typeof show_10531705 === 'function') { show_10531705().then(() => addMoney(0.5)); } };
+
+        window.requestWithdrawal = async () => {
+            const amount = parseFloat(document.getElementById('payAmount').value);
+            const num = document.getElementById('payNumber').value;
+            if(amount >= 1000 && amount <= userBalance) {
+                await addDoc(collection(db, "withdrawals"), { userId: currentUserId, number: num, amount: amount, status: "Pending", time: serverTimestamp() });
+                alert("Withdrawal submitted!");
+            } else { alert("Insufficient balance or invalid amount!"); }
+        };
+
+        window.selectMethod = (m, el) => {
+            document.querySelectorAll('.method-box').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+        };
+    </script>
+</body>
+</html>    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
